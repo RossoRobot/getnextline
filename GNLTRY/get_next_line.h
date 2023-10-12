@@ -6,7 +6,7 @@
 /*   By: mvolgger <mvolgger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:50:56 by mvolgger          #+#    #+#             */
-/*   Updated: 2023/10/12 16:53:48 by mvolgger         ###   ########.fr       */
+/*   Updated: 2023/10/12 18:41:53 by mvolgger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ char	    *ft_strdup(char *s);
 char	    *ft_strjoin(char *s1, char *s2);
 size_t	    ft_strlen(char *str);
 char	    *ft_substr(char *s, size_t start, size_t len);
-size_t	    ft_strlcpy(char *dest, char *src, size_t size);
+void    	ft_free(char *s);
 char	    *get_next_line(int fd);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: mvolgger <mvolgger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:51:10 by mvolgger          #+#    #+#             */
-/*   Updated: 2023/10/12 16:43:59 by mvolgger         ###   ########.fr       */
+/*   Updated: 2023/10/12 18:42:10 by mvolgger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,19 @@ char	*ft_strdup(char *s)
 {
 	size_t	length;
 	char	*dest;
+	size_t	i;
 
 	length = ft_strlen(s);
 	dest = (char *)malloc(length + 1);
-	if (dest == NULL)
+	if (!dest)
 		return (NULL);
-	ft_strlcpy(dest, s, length + 1);
+	i = 0;
+	while (i < length)
+	{
+		dest[i] = s[i];
+		i++;
+	}
+	dest[i] = '\0';
 	return (dest);
 }
 
@@ -29,20 +36,29 @@ char	*ft_strjoin(char *s1, char *s2)
 {
 	char	*newstr;
 	size_t	i;
+	size_t	j;
 	size_t	length;
 
-	if (!s1 && !s2)
-		return (0);
+	if (!s1)
+		return (ft_strdup(s2));
 	length = (ft_strlen(s1) + ft_strlen(s2));
 	newstr = (char *)malloc(sizeof(char) * (length + 1));
-	if (newstr == NULL)
-		return (NULL);
+	if (!newstr)
+		return (ft_free(s2), NULL);
 	i = 0;
-	while (*s1)
-		newstr[i++] = *s1++;
-	while (*s2)
-		newstr[i++] = *s2++;
-	newstr[i] = '\0';
+	j = 0;
+	while (s1[i] != '\0')
+	{
+		newstr[i] = s1[i];
+		i++;
+	}
+	while (s2[j] != '\0')
+	{
+		newstr[i + j] = s2[j];
+		j++;
+	}
+	newstr[i + j] = '\0';
+	ft_free(s1);
 	return (newstr);
 }
 
@@ -52,9 +68,7 @@ size_t	ft_strlen(char *str)
 
 	i = 0;
 	while (str[i] != '\0')
-	{
 		i++;
-	}
 	return (i);
 }
 
@@ -66,8 +80,6 @@ char	*ft_substr(char *s, size_t start, size_t len)
 
 	if (!s)
 		return (NULL);
-	if (ft_strlen(s) < start)
-		return (ft_strdup(""));
 	if (ft_strlen(s + start) < len)
 		len = ft_strlen(s + start);
 	substr = (char *)malloc(sizeof(char) * (len + 1));
@@ -85,21 +97,10 @@ char	*ft_substr(char *s, size_t start, size_t len)
 	return (substr);
 }
 
-size_t	ft_strlcpy(char *dest, char *src, size_t size)
+void	ft_free(char *s)
 {
-	size_t	i;
-	size_t	j;
-
-	i = 0;
-	j = ft_strlen(src);
-	if (size != 0)
-	{
-		while (src[i] != '\0' && i < size - 1)
-		{
-			dest[i] = src[i];
-			i++;
-		}
-		dest[i] = '\0';
-	}
-	return (j);
+	if (s == NULL)
+		return ;
+	free(s);
+	s = NULL;
 }

@@ -6,7 +6,7 @@
 /*   By: mvolgger <mvolgger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:50:42 by mvolgger          #+#    #+#             */
-/*   Updated: 2023/10/12 16:54:38 by mvolgger         ###   ########.fr       */
+/*   Updated: 2023/10/12 18:43:03 by mvolgger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,24 +30,18 @@ static char	*ft_readline(int fd, char *buffer, char *remainder)
 {	
 	int		bytes;
 	
-	if (!remainder)
-	{
-		remainder = ft_strdup("");
-		if (!remainder)
-			return(0);
-	}
 	bytes = 1;
 	while(bytes != 0)
 	{
 		bytes = read(fd, buffer, BUFFER_SIZE);
+		if (bytes == -1)
+			return (ft_free(remainder), NULL);
+		buffer[bytes] = '\0';
 		if (bytes == 0)
 			break;
-		if (bytes == -1)
-			return (0);
-		buffer[bytes] = '\0';
 		remainder = ft_strjoin(remainder, buffer);
 		if (!remainder)
-			return(0);
+			return(NULL);
 		if (checkfornewline(buffer) == 1)
 			break;
 	}
@@ -56,16 +50,14 @@ static char	*ft_readline(int fd, char *buffer, char *remainder)
 
 static char	*ft_trimnextline(char *remainder)
 {
-	size_t		i;
-	size_t		j;
+	size_t	i;
+	size_t	j;
 	char	*nextline;
 
 	i = 0;
 	j = 0;
 	while (remainder[i] != '\n' && remainder[i] != '\0')
-	{
 		i++;
-	}
 	if (remainder[i] == '\n')
 		i++;
 	nextline = (char *)malloc(sizeof(char) * (i + 1));
@@ -95,8 +87,10 @@ static char	*ft_extract(char *remainder)
 	if(remainder[i] == '\n')
 		i++;
 	length = (ft_strlen(remainder) - i);
+	if (length == 0)
+		return (ft_free(remainder), NULL);
 	temp = ft_substr(remainder, i, length);
-	free(remainder);
+	ft_free(remainder);
 	return (temp);
 }
 
@@ -106,17 +100,21 @@ char	*get_next_line(int fd)
 	static char	*remainder;
 	char		*nextline;
 
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
 	buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
-		return (0);
+		return (NULL);
 	remainder = ft_readline(fd, buffer, remainder);
-	free(buffer);
+	ft_free(buffer);
 	if (!remainder || !remainder[0])
     {
-        free(remainder);
-        return (0);
+        ft_free(remainder);
+        return (NULL);
     }
 	nextline = ft_trimnextline(remainder);
+	if (!nextline)
+		return (ft_free(remainder), NULL);
 	remainder = ft_extract(remainder);
 	return (nextline);
 }
@@ -128,12 +126,10 @@ char	*get_next_line(int fd)
 // 	char	*str;
 
 // 	str = "Hallo";
-// 	fd = open("file.txt", O_RDONLY);
-// 	while (str)
+// 	fd = open("test.txt", O_RDONLY);
+// 	while (i < 5)
 // 	{
 // 		str = get_next_line(fd);
-// 		if (!str)
-// 			break;
 // 		printf("%s", str);
 // 		free(str);
 // 		i++;
