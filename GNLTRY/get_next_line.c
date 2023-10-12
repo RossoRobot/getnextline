@@ -6,33 +6,36 @@
 /*   By: mvolgger <mvolgger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:50:42 by mvolgger          #+#    #+#             */
-/*   Updated: 2023/10/12 14:59:33 by mvolgger         ###   ########.fr       */
+/*   Updated: 2023/10/12 16:54:38 by mvolgger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int		checkfornewline(char *buffer)
+static int	checkfornewline(char *buffer)
 {
 	int	i;
 
 	i = 0;
 	while (buffer[i] != '\0')
 	{
-		i++;
 		if (buffer[i] == '\n')
 			return (1);
+		i++;
 	}
 	return (0);
 }
 
-char	*ft_readline(int fd, char *buffer, char *remainder)
+static char	*ft_readline(int fd, char *buffer, char *remainder)
 {	
-	char	*nextline;
 	int		bytes;
 	
 	if (!remainder)
+	{
 		remainder = ft_strdup("");
+		if (!remainder)
+			return(0);
+	}
 	bytes = 1;
 	while(bytes != 0)
 	{
@@ -41,17 +44,20 @@ char	*ft_readline(int fd, char *buffer, char *remainder)
 			break;
 		if (bytes == -1)
 			return (0);
+		buffer[bytes] = '\0';
 		remainder = ft_strjoin(remainder, buffer);
+		if (!remainder)
+			return(0);
 		if (checkfornewline(buffer) == 1)
 			break;
 	}
 	return (remainder);
 }
 
-char	*ft_trimnextline(char *remainder)
+static char	*ft_trimnextline(char *remainder)
 {
-	int		i;
-	int		j;
+	size_t		i;
+	size_t		j;
 	char	*nextline;
 
 	i = 0;
@@ -74,10 +80,10 @@ char	*ft_trimnextline(char *remainder)
 	return (nextline);
 }
 
-char	*ft_extract(char *remainder)
+static char	*ft_extract(char *remainder)
 {
-	int		i;
-	int		length;
+	size_t		i;
+	size_t	length;
 	char	*temp;
 	
 	i = 0;
@@ -104,6 +110,12 @@ char	*get_next_line(int fd)
 	if (!buffer)
 		return (0);
 	remainder = ft_readline(fd, buffer, remainder);
+	free(buffer);
+	if (!remainder || !remainder[0])
+    {
+        free(remainder);
+        return (0);
+    }
 	nextline = ft_trimnextline(remainder);
 	remainder = ft_extract(remainder);
 	return (nextline);
@@ -114,10 +126,14 @@ char	*get_next_line(int fd)
 // 	int fd;
 // 	int i = 0;
 // 	char	*str;
+
+// 	str = "Hallo";
 // 	fd = open("file.txt", O_RDONLY);
-// 	while (i < 40)
+// 	while (str)
 // 	{
 // 		str = get_next_line(fd);
+// 		if (!str)
+// 			break;
 // 		printf("%s", str);
 // 		free(str);
 // 		i++;

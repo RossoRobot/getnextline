@@ -6,7 +6,7 @@
 /*   By: mvolgger <mvolgger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/12 13:51:10 by mvolgger          #+#    #+#             */
-/*   Updated: 2023/10/12 14:32:22 by mvolgger         ###   ########.fr       */
+/*   Updated: 2023/10/12 16:43:59 by mvolgger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ char	*ft_strjoin(char *s1, char *s2)
 	size_t	i;
 	size_t	length;
 
+	if (!s1 && !s2)
+		return (0);
 	length = (ft_strlen(s1) + ft_strlen(s2));
 	newstr = (char *)malloc(sizeof(char) * (length + 1));
 	if (newstr == NULL)
@@ -56,7 +58,7 @@ size_t	ft_strlen(char *str)
 	return (i);
 }
 
-char	*ft_substr(char *s, int start, int len)
+char	*ft_substr(char *s, size_t start, size_t len)
 {
 	char	*substr;
 	size_t	i;
