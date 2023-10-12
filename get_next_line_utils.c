@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mvolgger <mvolgger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/10 16:03:55 by mvolgger          #+#    #+#             */
-/*   Updated: 2023/10/10 19:20:11 by mvolgger         ###   ########.fr       */
+/*   Created: 2023/10/12 13:51:10 by mvolgger          #+#    #+#             */
+/*   Updated: 2023/10/12 14:32:22 by mvolgger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,22 +23,6 @@ char	*ft_strdup(char *s)
 		return (NULL);
 	ft_strlcpy(dest, s, length + 1);
 	return (dest);
-}
-
-char	*ft_strchr(char *s, int c)
-{
-	char	c1;
-
-	c1 = (unsigned char)c;
-	while (*s)
-	{
-		if (*s == c1)
-			return ((char *)s);
-		s++;
-	}
-	if (c1 == '\0')
-		return ((char *)s);
-	return (0);
 }
 
 char	*ft_strjoin(char *s1, char *s2)
@@ -72,6 +56,33 @@ size_t	ft_strlen(char *str)
 	return (i);
 }
 
+char	*ft_substr(char *s, int start, int len)
+{
+	char	*substr;
+	size_t	i;
+	size_t	j;
+
+	if (!s)
+		return (NULL);
+	if (ft_strlen(s) < start)
+		return (ft_strdup(""));
+	if (ft_strlen(s + start) < len)
+		len = ft_strlen(s + start);
+	substr = (char *)malloc(sizeof(char) * (len + 1));
+	if (!substr)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (s[i])
+	{
+		if (i >= start && j < len)
+			substr[j++] = s[i];
+		i++;
+	}
+	substr[j] = '\0';
+	return (substr);
+}
+
 size_t	ft_strlcpy(char *dest, char *src, size_t size)
 {
 	size_t	i;
@@ -89,15 +100,4 @@ size_t	ft_strlcpy(char *dest, char *src, size_t size)
 		dest[i] = '\0';
 	}
 	return (j);
-}
-
-int	ft_getbufferlength(char *buffer)
-{
-	int i;
-
-	i = 0;
-	while (buffer[i] != '\n')
-		i++;
-	i++;
-	return (i);
 }

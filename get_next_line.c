@@ -5,79 +5,123 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mvolgger <mvolgger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/10 15:54:20 by mvolgger          #+#    #+#             */
-/*   Updated: 2023/10/10 19:36:07 by mvolgger         ###   ########.fr       */
+/*   Created: 2023/10/12 13:50:42 by mvolgger          #+#    #+#             */
+/*   Updated: 2023/10/12 14:59:33 by mvolgger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_readline(int fd, char *remainder, char *buffer)
+int		checkfornewline(char *buffer)
 {
-	int		bytes;
-	int		i;
-	int		j;
-	static char	*temp;
-	char	*newline;
-	
-	bytes = 1;
+	int	i;
+
 	i = 0;
-	j = 0;
-	temp = ft_strdup("");
-	newline = NULL;
-	while (bytes != 0)
+	while (buffer[i] != '\0')
+	{
+		i++;
+		if (buffer[i] == '\n')
+			return (1);
+	}
+	return (0);
+}
+
+char	*ft_readline(int fd, char *buffer, char *remainder)
+{	
+	char	*nextline;
+	int		bytes;
+	
+	if (!remainder)
+		remainder = ft_strdup("");
+	bytes = 1;
+	while(bytes != 0)
 	{
 		bytes = read(fd, buffer, BUFFER_SIZE);
-		if (ft_strchr(buffer, '\n') == 0)
-		{
-			temp = ft_strjoin(temp, buffer);
-		}
-		else
-		{
-			newline = (char *)malloc(sizeof(char) * ((ft_strlen(temp) + ft_getbufferlength(buffer)) + 1));
-			while(temp[i])
-			{
-				newline[i] = temp[i];
-				i++;
-			}
-			while(buffer[j])
-			{
-				newline[i + j] = buffer[j];
-				if (buffer[j] == '\n')
-				{
-					newline[i + j] = '\n';
-					j++;
-					free(temp);
-					break;
-				}
-				j++;
-			}
+		if (bytes == 0)
 			break;
-		}
+		if (bytes == -1)
+			return (0);
+		remainder = ft_strjoin(remainder, buffer);
+		if (checkfornewline(buffer) == 1)
+			break;
 	}
+	return (remainder);
+}
+
+char	*ft_trimnextline(char *remainder)
+{
+	int		i;
+	int		j;
+	char	*nextline;
+
+	i = 0;
+	j = 0;
+	while (remainder[i] != '\n' && remainder[i] != '\0')
+	{
+		i++;
+	}
+	if (remainder[i] == '\n')
+		i++;
+	nextline = (char *)malloc(sizeof(char) * (i + 1));
+	if (!nextline)
+		return (NULL);
+	while (j < i)
+	{
+		nextline[j] = remainder[j];
+		j++;
+	}
+	nextline[j] = '\0';
+	return (nextline);
+}
+
+char	*ft_extract(char *remainder)
+{
+	int		i;
+	int		length;
+	char	*temp;
 	
-	newline[i + j] = '\0';
-	return (newline);
+	i = 0;
+	length = 0;
+	while (remainder[i] != '\n' && remainder[i] != '\0')
+	{
+		i++;
+	}
+	if(remainder[i] == '\n')
+		i++;
+	length = (ft_strlen(remainder) - i);
+	temp = ft_substr(remainder, i, length);
+	free(remainder);
+	return (temp);
 }
 
 char	*get_next_line(int fd)
 {
-	char			*buffer;
-	static char 	*remainder;
-	char			*newline;
-	
+	char		*buffer;
+	static char	*remainder;
+	char		*nextline;
+
 	buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	newline = ft_readline(fd, remainder, buffer);
-	free(buffer);
-	return (newline);
+	if (!buffer)
+		return (0);
+	remainder = ft_readline(fd, buffer, remainder);
+	nextline = ft_trimnextline(remainder);
+	remainder = ft_extract(remainder);
+	return (nextline);
 }
 
-int main()
-{
-	int fd = open( "file.txt" , O_RDONLY);
-	printf("nextline: %s", get_next_line(fd));
-	printf("nextline: %s", get_next_line(fd));
-	printf("nextline: %s", get_next_line(fd));
-	close(fd);
-	return (0);
-}
+// int	main()
+// {
+// 	int fd;
+// 	int i = 0;
+// 	char	*str;
+// 	fd = open("file.txt", O_RDONLY);
+// 	while (i < 40)
+// 	{
+// 		str = get_next_line(fd);
+// 		printf("%s", str);
+// 		free(str);
+// 		i++;
+// 	}
+// 	close(fd);
+// 	return (0);
+// }
