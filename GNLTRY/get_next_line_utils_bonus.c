@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mvolgger <mvolgger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/12 13:51:10 by mvolgger          #+#    #+#             */
-/*   Updated: 2023/10/13 13:36:24 by mvolgger         ###   ########.fr       */
+/*   Created: 2023/10/13 15:09:33 by mvolgger          #+#    #+#             */
+/*   Updated: 2023/10/13 15:59:58 by mvolgger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*ft_strdup(char *s)
 {

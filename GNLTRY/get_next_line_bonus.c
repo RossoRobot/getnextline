@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mvolgger <mvolgger@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/12 13:50:42 by mvolgger          #+#    #+#             */
-/*   Updated: 2023/10/13 13:50:46 by mvolgger         ###   ########.fr       */
+/*   Created: 2023/10/13 15:08:24 by mvolgger          #+#    #+#             */
+/*   Updated: 2023/10/13 16:05:59 by mvolgger         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static int	checkfornewline(char *buffer)
 {
@@ -97,7 +97,7 @@ static char	*ft_extract(char *remainder)
 char	*get_next_line(int fd)
 {
 	char		*buffer;
-	static char	*remainder;
+	static char	*remainder[1024];
 	char		*nextline;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
@@ -105,35 +105,44 @@ char	*get_next_line(int fd)
 	buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
 		return (NULL);
-	remainder = ft_readline(fd, buffer, remainder);
+	remainder[fd] = ft_readline(fd, buffer, remainder[fd]);
 	ft_free(buffer);
-	if (!remainder || !remainder[0])
+	if (!remainder[fd] || !remainder[fd][0])
 	{
-		ft_free(remainder);
+		ft_free(remainder[fd]);
 		return (NULL);
 	}
-	nextline = ft_trimnextline(remainder);
+	nextline = ft_trimnextline(remainder[fd]);
 	if (!nextline)
-		return (ft_free(remainder), NULL);
-	remainder = ft_extract(remainder);
+		return (ft_free(remainder[fd]), NULL);
+	remainder[fd] = ft_extract(remainder[fd]);
 	return (nextline);
 }
 
 // int	main()
 // {
 // 	int fd;
-// 	int i = 0;
-// 	char	*str;
+// 	int fd2;
+// 	int	i = 0;
 
-// 	str = "Hallo";
-// 	fd = open("test.txt", O_RDONLY);
-// 	while (i < 5)
+// 	char	*str;
+// 	char	*str2;
+// 	fd = open("txt.txt" ,O_RDONLY);
+// 	fd2 = open("file.txt", O_RDONLY);
+// 	printf("%i\n", fd);
+// 	printf("%i\n", fd2);
+// 	while (i < 7)
 // 	{
 // 		str = get_next_line(fd);
 // 		printf("%s", str);
-// 		free(str);
+// 		str2 = get_next_line(fd2);
+// 		printf("%s", str2);
 // 		i++;
+// 		//free(str);
+// 		//free(str2);
 // 	}
+// 	free(str);
 // 	close(fd);
+// 	close(fd2);
 // 	return (0);
 // }
